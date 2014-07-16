@@ -12,13 +12,13 @@ namespace KaTaNA
 		{
 		public:
 			virtual T &operator[](unsigned int i) = 0;
-			constexpr virtual const T &operator[](unsigned int i) const = 0;
-			virtual unsigned int dim() = 0;
+			virtual const T &operator[](unsigned int i) const = 0;
+			virtual unsigned int dim() const = 0;
 		};
 
 		template<class T>
 		class Vector
-			:IVector<T>
+			:public IVector<T>
 		{
 			const unsigned int d;
 			T *buf;
@@ -27,7 +27,7 @@ namespace KaTaNA
 			~Vector(){delete [] buf;}
 			constexpr T &operator[](unsigned int i){assert(i < d);return buf[i];}
 			constexpr const T &operator[](unsigned int i) const {assert(i < d);return buf[i];}
-			constexpr unsigned int dim(){return d;}
+			constexpr unsigned int dim() const {return d;}
 		};
 	}
 }
