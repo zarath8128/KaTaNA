@@ -1,7 +1,7 @@
 			ALL 		?= 
 			EXEC		?= ${ALL}
 			OBJ			?= ${ALL}
-			SRC			?= 
+			SRC			?=
 			HEADER		?= 
 override	FLAGS		+= -Wall -Wextra -mtune=native -march=native ${OPTIMIZE_FLAGS}
 override 	CFLAGS		+= -std=c99 ${FLAGS}
@@ -38,7 +38,7 @@ debug			: all
 profile			: ${addsuffix .profile, ${EXEC}}
 %.profile		: %.for_profile
 	@echo "collecting verbose profile"
-	@echo "\nGNU time profile:\n" > $@
+	@echo "\nGNU time profiler:\n" > $@
 ifeq (${notdir ${SHELL}},sh)
 	${SH_TIME_PROFILE}
 else ifeq (${notdir ${SHELL}},bash)
@@ -67,9 +67,10 @@ optimize		: ${addsuffix .optimized, ${EXEC}}
 	@./$^
 	@cp $< $@
 
-include ${basename ${notdir ${SRC}}}.depend
-
 %.depend:%.c
 	@${CC} ${CFLAGS} -MM $^ | sed -e "s/\($..*\)\.o[ :]*/\1.o $@ : /g" > $@
 %.depend:%.cpp
 	@${CXX} ${CXXFLAGS} -MM $^ | sed -e "s/\($..*\)\.o[ :]*/\1.o $@ : /g" > $@
+
+include ${basename ${notdir ${SRC}}}.depend
+
