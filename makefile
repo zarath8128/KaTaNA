@@ -27,7 +27,7 @@ full			:
 	@${MAKE} optimize
 	@${MAKE} all
 clean			: 
-	-rm -f ${ALL} ${EXEC} ${OBJ} *.profile *.optimized *.depend *.o
+	-rm -f ${ALL} ${EXEC} ${OBJ} *.profile *.optimized *.depend *.o gmon.out
 
 release			: FLAGS += -DNDEBUG
 release			: all
