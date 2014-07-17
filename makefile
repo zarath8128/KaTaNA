@@ -1,9 +1,11 @@
 			ALL 		?= 
 			EXEC		?= ${ALL}
 			OBJ			?= ${ALL}
-			SRC			?=
+			SRC			?= ${CSRS} ${CXXSRC}
+			CSRC		?= ${shell find . -name '*.c'}
+			CXXSRC		?= ${shell find . -name '*.cpp'}
 			HEADER		?= 
-override	FLAGS		+= -Wall -Wextra -mtune=native -march=native ${OPTIMIZE_FLAGS}
+override	FLAGS		+= -Wall -Wextra -mtune=native -march=native -fdiagnostics-color=auto ${OPTIMIZE_FLAGS}
 override 	CFLAGS		+= -std=c99 ${FLAGS}
 override	CXXFLAGS	+= -std=c++1y ${FLAGS}
 override	LDFLAGS		+= ${OPTIMIZE_FLAGS} ${FLAGS}
@@ -26,6 +28,7 @@ full			:
 	@${MAKE} profile
 	@${MAKE} optimize
 	@${MAKE} all
+
 clean			: 
 	-rm -f ${ALL} ${EXEC} ${OBJ} *.profile *.optimized *.depend *.o gmon.out
 
@@ -67,10 +70,15 @@ optimize		: ${addsuffix .optimized, ${EXEC}}
 	@./$^
 	@cp $< $@
 
-%.depend:%.c
+%.c.depend:%.c
 	@${CC} ${CFLAGS} -MM $^ | sed -e "s/\($..*\)\.o[ :]*/\1.o $@ : /g" > $@
-%.depend:%.cpp
+%.cpp.depend:%.cpp
 	@${CXX} ${CXXFLAGS} -MM $^ | sed -e "s/\($..*\)\.o[ :]*/\1.o $@ : /g" > $@
 
-include ${basename ${notdir ${SRC}}}.depend
+ifneq (${CSRC}, )
+-include ${notdir ${CSRC}}.depend
+endif
 
+ifneq (${CXXSRC}, )
+-include ${notdir ${CXXSRC}}.depend
+endif
