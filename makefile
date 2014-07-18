@@ -5,7 +5,8 @@
 			CSRC		?= ${shell find . -name '*.c'}
 			CXXSRC		?= ${shell find . -name '*.cpp'}
 			HEADER		?= 
-override	FLAGS		+= -Wall -Wextra -mtune=native -march=native -fdiagnostics-color=auto ${OPTIMIZE_FLAGS}
+			INCPATH     ?= .
+override	FLAGS		+= -Wall -Wextra -mtune=native -march=native -fdiagnostics-color=auto ${addprefix -I, ${INCPATH}}${OPTIMIZE_FLAGS} 
 override 	CFLAGS		+= -std=c99 ${FLAGS}
 override	CXXFLAGS	+= -std=c++1y ${FLAGS}
 override	LDFLAGS		+= ${OPTIMIZE_FLAGS} ${FLAGS}

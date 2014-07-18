@@ -29,9 +29,7 @@ public:
 */
 int main()
 {
-	double x[] = {1, 3, 2, 4, 76, 54, 0};
-//	R r(x, 7);
-//	for(auto i : r)
-//		std::cout << i << std::endl;
+	Array<double> x(20);
+	
 	return 0;
 }
