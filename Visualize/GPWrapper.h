@@ -2,9 +2,9 @@
 #define ZARATH_KATANA_VISUALIZE_GPWRAPPER_H
 #include <cstdarg>
 #include <cstdio>
-
-#include "../LA/Vector.h"
 #include <cassert>
+
+#include <PDE/Region.h>
 
 namespace KaTaNA
 {
@@ -23,11 +23,11 @@ namespace KaTaNA
 				pclose(gp);
 			}
 
-			void operator()(const KaTaNA::LA::IVector<double> &x, const KaTaNA::LA::IVector<double> &u)
+			template<class T, class U, class RANGE>
+			void operator()(const KaTaNA::PDE::ILine<T> &x, const KaTaNA::PDE::ILine<U> &u, const RANGE &range)
 			{
-				assert(x.dim() == u.dim());
-				for(unsigned int i = 0; i < x.dim(); ++i)
-					(*this)("%f %f\n", x[i], u[i]);
+				for(auto xi : range)
+					(*this)("%f %f\n", x(xi.i), u(xi.i));
 				(*this)("e\n");
 			}
 

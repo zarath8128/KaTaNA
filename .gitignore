@@ -1,4 +1,9 @@
-*
+*.depend
+*.o
+*.swp
+*.optimized
+*.profile
+test
 !makefile
 !.gitignore
 !*.c

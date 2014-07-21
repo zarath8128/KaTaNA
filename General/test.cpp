@@ -29,11 +29,13 @@ public:
 	const IIterator<double> &end(){return std::move(I(e));}
 };
 */
+template<class T>
+std::ostream &operator<<(std::ostream &dest, T t){return dest;}
 int main()
 {
 	Array<double> x(20), y(20);
 	x[5] = 0.023;
 	y = x;
-	std::cout << y << std::endl;
+	std::cout << line << y << std::endl;
 	return 0;
 }

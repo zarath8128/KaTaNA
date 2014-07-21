@@ -2,6 +2,7 @@
 #define ZARATH_KATANA_LA_VECTOR_H
 
 #include <cassert>
+#include <KaTaNA/General/Buffer.h>
 
 namespace KaTaNA
 {

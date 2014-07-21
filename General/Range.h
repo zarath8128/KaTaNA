@@ -12,17 +12,14 @@ namespace KaTaNA
 		struct Proxy
 		{
 		protected:
-			T &buf;
+			T &elem;
 		public:
 			const unsigned int i;
 
-			constexpr Proxy(T &buf, unsigned int i):buf(buf), i(i){}
-			operator T&(){return buf;}
-			constexpr operator const T&() const{return buf;}
+			constexpr Proxy(T &elem, unsigned int i):elem(elem), i(i){}
+			operator T&(){return elem;}
+			constexpr operator const T&() const{return elem;}
 		};
-
-		template<class T>
-		constexpr Proxy<T> ProxyMaker(T &buf, unsigned int i){return Proxy<T>(buf, i);}
 
 		template<class T>
 		struct Iterator
@@ -32,8 +29,10 @@ namespace KaTaNA
 			unsigned int i;
 		public:
 			constexpr Iterator(T &buf, unsigned int i):buf(buf),i(i){}
-			virtual Iterator &operator++(){++i;return *this;}
+			virtual const Iterator &operator++(){++i;return *this;}
 			constexpr bool operator!=(const Iterator &ite)const{return i != ite.i;}
+			template<class U>
+			static constexpr Proxy<U> ProxyMaker(U &buf, unsigned int i){return Proxy<U>(buf, i);}
 			constexpr auto operator*()const -> decltype(ProxyMaker(buf[i], i)){return ProxyMaker(buf[i], i);};
 		};
 
@@ -41,7 +40,6 @@ namespace KaTaNA
 		class ForallRange
 		{
 			T &buf;
-
 		public:
 			constexpr ForallRange(T &buf):buf(buf){}
 

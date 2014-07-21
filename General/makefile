@@ -1,4 +1,5 @@
 ALL=test
-SRC=test.cpp
 
 include ../makefile
+
+test:Output.o
