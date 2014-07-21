@@ -1,5 +1,6 @@
-*.swp
-*.o
-*.depend
-*.out
-*.optimized
+*
+!makefile
+!.gitignore
+!*.c
+!*.h
+!*.cpp
