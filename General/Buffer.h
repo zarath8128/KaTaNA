@@ -3,6 +3,7 @@
 
 #include <cassert>
 #include <iostream>
+#include "Range.h"
 
 namespace KaTaNA
 {
@@ -13,38 +14,16 @@ namespace KaTaNA
 		{
 			T *buf;
 
-			struct Iterator
-			{
-				T *buf;
-				unsigned int n;
-				Iterator(T *buf, unsigned int n):buf(buf), n(n){}
-
-				unsigned int operator*(){return n;}
-				void operator++(){++n;}
-				bool operator!=(const Iterator &ite){return n != ite.n;}
-			};
-
-			struct ForAll
-			{
-				T *buf;
-				const unsigned int N;
-				ForAll(T *buf, unsigned int N):buf(buf), N(N){}
-
-				Iterator begin() const {return Iterator(buf, 0);}
-				Iterator end() const {return Iterator(buf, N);}
-			};
-
 		public:
 			const unsigned int N;
-			const ForAll forall;
 
-			Array(unsigned int N):buf(new T[N]), N(N), forall(buf, N){}
+			Array(unsigned int N):buf(new T[N]), N(N){}//, forall(buf, N){}
 			~Array(){delete [] buf;}
 			Array &operator=(const Array &a)
 			{
 				assert(N == a.N);
-				for(auto i : forall)
-					buf[i] = a[i];
+				for(auto x : Forall(a))
+					buf[x.i] = x;
 				return *this;
 			}
 
@@ -57,8 +36,8 @@ namespace KaTaNA
 		template<class T>
 		std::ostream &operator<<(std::ostream &dest, const Array<T> &a)
 		{
-			for(auto i : a.forall)
-				dest << a[i];
+			for(auto x : Forall(a))
+				dest << x;
 			return dest;
 		}
 	}

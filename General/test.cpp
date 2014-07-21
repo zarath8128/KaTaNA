@@ -1,5 +1,7 @@
 #include <iostream>
 #include "Buffer.h"
+#include "Output.h"
+#include "Range.h"
 #include <utility>
 
 using namespace KaTaNA::General;
@@ -29,9 +31,9 @@ public:
 */
 int main()
 {
-	double x[] = {1, 3, 2, 4, 76, 54, 0};
-//	R r(x, 7);
-//	for(auto i : r)
-//		std::cout << i << std::endl;
+	Array<double> x(20), y(20);
+	x[5] = 0.023;
+	y = x;
+	std::cout << y << std::endl;
 	return 0;
 }
