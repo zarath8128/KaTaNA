@@ -3,6 +3,8 @@
 #include "Output.h"
 #include "Range.h"
 #include <utility>
+#include "Sleep.h"
+#include "Debug.h"
 
 using namespace KaTaNA::General;
 
@@ -36,6 +38,12 @@ int main()
 	Array<double> x(20), y(20);
 	x[5] = 0.023;
 	y = x;
+	std::cout << line << y << std::endl;
+	DBG_WRITE("test");
+	nanosleep(.2);
+	DBG_WRITE("test2");
+	nanosleep(.4);
+	DBG_WRITE();
 	std::cout << line << y << std::endl;
 	return 0;
 }

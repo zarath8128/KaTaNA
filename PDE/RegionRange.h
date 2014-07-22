@@ -49,6 +49,8 @@ namespace KaTaNA
 
 		template<class T>
 		LineRange<T> GlobalLineRange(Line<T> &line){return LineRange<T>(line, -(int)line.margin, line.divide + line.margin);}
+		template<class T>
+		LineRange<T> CoreLineRange(Line<T> &line){return LineRange<T>(line, 0, line.divide);}
 
 	}
 }
