@@ -7,6 +7,7 @@
 #include "Debug.h"
 #include <cstring>
 #include <cstdio>
+#include "MetaProgramming.h"
 
 using namespace KaTaNA::General;
 
@@ -48,11 +49,15 @@ auto h(void *)->decltype(&T::print, '\0');
 template<class T>
 int h(...);
 
+DEF_HAS_(print);
+
 int main()
 {
 //	f(A());
 //	f(B());
 	std::cout << (sizeof(decltype(h<A>(0))) == sizeof(decltype(h<B>(0)))) << std::endl;
+	constexpr bool a = has_print<A>();
+	std::cout << a << std::endl;
 //	check<A>(nullptr);
 //	std::cout << CHECK_PRINT<A>().value << std::endl;
 //	std::cout << CHECK_PRINT<B>::value << std::endl;
