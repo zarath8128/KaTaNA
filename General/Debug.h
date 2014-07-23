@@ -8,6 +8,7 @@
 #include <iostream>
 #include <typeinfo>
 #include <cxxabi.h>
+#include <utility>
 #else
 #include <errno.h>
 #include <string.h>
@@ -52,9 +53,6 @@ namespace KaTaNA
 #else
 #define EXPR_VAL(expr)
 #endif
-
-		
-
 
 		extern "C"
 		{
