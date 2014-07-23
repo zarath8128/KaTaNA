@@ -5,6 +5,8 @@
 #include <utility>
 #include "Sleep.h"
 #include "Debug.h"
+#include <cstring>
+#include <cstdio>
 
 using namespace KaTaNA::General;
 
@@ -31,19 +33,16 @@ public:
 	const IIterator<double> &end(){return std::move(I(e));}
 };
 */
-template<class T>
-std::ostream &operator<<(std::ostream &dest, T t){return dest;}
+struct A
+{
+	void print(){std::cout << "A\n";}
+};
+struct B
+{
+	int p;
+};
 int main()
 {
-	Array<double> x(20), y(20);
-	x[5] = 0.023;
-	y = x;
-	std::cout << line << y << std::endl;
-	DBG_WRITE("test");
-	nanosleep(.2);
-	DBG_WRITE("test2");
-	nanosleep(.4);
-	DBG_WRITE();
-	std::cout << line << y << std::endl;
+
 	return 0;
 }
