@@ -3,14 +3,20 @@
 #include "GPWrapper.h"
 #include <PDE/RegionRange.h>
 #include <General/Sleep.h>
+#include "GLFW/Window.h"
 
 using namespace KaTaNA::Visualize;
 using namespace KaTaNA::PDE;
 using namespace KaTaNA::General;
+using namespace GLFW;
 
 int main()
 {
-	const unsigned int N = 600;
+	Window w;
+	std::cout << w;
+	while(w)
+		nanosleep(0.2), std::cout << w << std::endl;
+/*	const unsigned int N = 600;
 	const double max = 20, min = -1;
 	GnuPlot gp(false);
 	Line<double> f(N, 1);
@@ -41,5 +47,5 @@ int main()
 		gp.flush();
 		nanosleep(0.01);
 	}
-	return 0;
+*/	return 0;
 }
