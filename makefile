@@ -1,17 +1,18 @@
-			ALL 		?= 
+			ALL 		?= test
 			EXEC		?= ${ALL}
 			OBJ			?= ${ALL}
 			SRC			?= ${CSRS} ${CXXSRC}
 			CSRC		?= ${shell find . -name '*.c'}
 			CXXSRC		?= ${shell find . -name '*.cpp'}
-			HEADER		?= 
-			INCPATH     ?= .
-override	FLAGS		+= -Wall -Wextra -mtune=native -march=native -fdiagnostics-color=auto ${addprefix -I, ${INCPATH}}${OPTIMIZE_FLAGS} 
+			HEADER		?= ${shell find . -name '*.h'} 
+			DEPENDS		 = ${CSRC} ${CXXSRC}
+override	FLAGS		+= -Wall -Wextra -mtune=native -march=native -fdiagnostics-color=auto ${OPTIMIZE_FLAGS}
 override 	CFLAGS		+= -std=c99 ${FLAGS}
 override	CXXFLAGS	+= -std=c++1y ${FLAGS}
 override	LDFLAGS		+= ${OPTIMIZE_FLAGS} ${FLAGS}
-			LDLIBS		?=
-			CC			=  ${CXX}
+override	LDLIBS		+= -lstdc++
+			CC			 = gcc
+			CXX			 = g++
 
 			TIME		?= /usr/bin/time
 define		SH_TIME_PROFILE
@@ -26,6 +27,7 @@ endef
 
 all				: ${ALL}
 full			:
+	@${MAKE} clean
 	@${MAKE} profile
 	@${MAKE} optimize
 	@${MAKE} all
@@ -57,6 +59,8 @@ endif
 %.for_profile	: FLAGS += -pg
 %.for_profile	: %
 	@mv $^ $@
+	@echo "exec $@ for profiling."
+	@./$@
 
 optimize		: ${addsuffix .optimized, ${EXEC}}
 %.optimized 	: OPTIMIZE_FLAGS = -fprofile-use
@@ -75,11 +79,9 @@ optimize		: ${addsuffix .optimized, ${EXEC}}
 	@${CC} ${CFLAGS} -MM $^ | sed -e "s/\($..*\)\.o[ :]*/\1.o $@ : /g" > $@
 %.cpp.depend:%.cpp
 	@${CXX} ${CXXFLAGS} -MM $^ | sed -e "s/\($..*\)\.o[ :]*/\1.o $@ : /g" > $@
+#%.h.depend:%.h
+#	@${CXX} ${CXXFLAGS} -MM $^ | sed -e "s/\($..*\)\.o[ :]*/\1.o $@ : /g" > $@
 
-ifneq (${CSRC}, )
--include ${notdir ${CSRC}}.depend
-endif
-
-ifneq (${CXXSRC}, )
--include ${notdir ${CXXSRC}}.depend
+ifneq (${DEPENDS}, )
+-include ${addsuffix .depend, ${notdir ${DEPENDS}}}
 endif

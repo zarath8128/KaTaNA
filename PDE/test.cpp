@@ -1,6 +1,8 @@
 #include <iostream>
+#include "Region.h"
+#include "RegionRange.h"
 
 int main()
 {
-	return 0;
+	std::cout << "test code..." << std::endl;
 }
