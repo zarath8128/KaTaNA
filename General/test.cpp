@@ -1,10 +1,23 @@
 #include "Debug.h"
+#include "Buffer.h"
+
+using namespace KaTaNA::General;
+
+struct A
+{
+	virtual void say(){std::cout << "Hello A!\n";}
+};
+struct B
+	:public A
+{
+	void say(){std::cout << "Hello B!\n";}
+};
+
 int main()
 {
-	int i = 234;
-	DBG_WRITE();
-	DBG_WRITE("test");
-	DBG_WRITE("%d", 25);
-	EXPR_VAL(i); //c++11 only
+	A aa;
+	B bb;
+	Clone<A> a(std::move(bb));
+	a->say();
 	return 0;
 }
