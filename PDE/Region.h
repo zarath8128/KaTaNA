@@ -1,7 +1,8 @@
 #ifndef ZARATH_KATANA_PDE_REGION_H
 #define ZARATH_KATANA_PDE_REGION_H
 
-#include <General/Buffer.h>
+#include "../General/Buffer.h"
+#include "../General/Debug.h"
 
 namespace KaTaNA
 {
@@ -9,88 +10,70 @@ namespace KaTaNA
 	{
 
 		template<class T>
-		class ILine
+		class IReadableLine
 		{
 		public:
-			virtual T &operator()(int) = 0;
-			const virtual T &operator()(int) const = 0;
+			virtual ~IReadableLine(){}
+			virtual T operator()(int) const = 0;
+		};
+
+		template<class T>
+		class IWritableLine
+		{
+		public:
+			virtual ~IWritableLine(){}
+			virtual T &operator()(int)= 0;
 		};
 
 		template<class T>
 		class Line
-			:protected General::Array<T>, public ILine<T>
+			:public IReadableLine<T>, public IWritableLine<T>
 		{
+			General::IBuffer<T> &buf;
 		public:
-			const unsigned int divide, margin;
+			const unsigned int offset, length, margin;
 
-			Line(unsigned int divide, unsigned int margin):General::Array<T>(divide + 2*margin), divide(divide), margin(margin){}
+			Line(unsigned int offset, unsigned int length, unsigned int margin, General::IBuffer<T> &buffer)
+				:Line(offset, length, margin, buffer, [](int i)->T{return 0;}){}
+			template<class F>
+			Line(unsigned int offset, unsigned int length, unsigned int margin, General::IBuffer<T> &buffer, const F& f)
+				:buf(buffer), offset(offset), length(length), margin(margin)
+				{
+					for(int i = -(int)margin; i < (int)(length + margin); ++i)
+						(*this)(i) = f(i);
+				}
+			~Line(){}
 
-			T &operator()(int i){return assert(i > -1 - (int)margin), (*this)[i + margin];}
-			const T &operator()(int i) const {return assert(i > -1 - (int)margin), (*this)[i + margin];}
-		};
-
-		template<class T>
-		class UpWind
-			:public ILine<T>
-		{
-			ILine<T> &f, &u;
-			T dx;
-		public:
-			UpWind(ILine<T> &f, ILine<T> &u, const T &dx):f(f), u(u), dx(dx){}
-
-			T &operator()(int i)
-			{
-				static T dammy;
-				return dammy = u(i)*(u(i) > 0 ? f(i) - f(i - 1) : f(i + 1) - f(i))/dx;
-			}
-			const T &operator()(int i) const
-			{
-				static T dammy;
-				return dammy = u(i)*(u(i) > 0 ? f(i) - f(i - 1) : f(i + 1) - f(i))/dx;
-			}
+			T &operator()(int i){return assert(-1 - (int)margin < i && i < (int)(length + margin)), buf[i + margin + offset];}
+			T operator()(int i) const {return assert(-1 - (int)margin < i && i < (int)(length + margin)), buf[i + margin + offset];}
 		};
 
 		template<class T>
 		class FormalLine
-			:public ILine<T>
+			:public IReadableLine<T>
 		{
 		public:
-			const T min, max, dx;
-			const unsigned int divide;
+			const T min, max, width;
+			const unsigned int N;
 
-			FormalLine(const T &min, const T &max, unsigned int divide):min(min), max(max), dx((max - min)/(divide - 1)), divide(divide){}
+			FormalLine(const T &min, const T &max, unsigned int N):min(min), max(max), width((max - min)), N(N){}
 
-			T &operator()(int i){static T dammy; return dammy = min + i*dx;}
-			const T &operator()(int i) const {static T dammy; return dammy = min + i*dx;}
+			T operator()(int i) const {return min + i*width/(N - 1);}
 		};
 
 		template<class T, class F>
 		class FunctionLine
-			:public ILine<T>
+			:public IReadableLine<T>
 		{
 			mutable F func;
 		public:
 			FunctionLine(F f):func(f){}
 
-			T &operator()(int i){static T dammy; return dammy = func(i);}
-			const T &operator()(int i) const {static T dammy; return dammy = func(i);}
+			T operator()(int i) const {return func(i);}
 		};
 
 		template<class T, class F>
 		FunctionLine<T, F> FuncLineFactory(F func){return FunctionLine<T, F>(func);}
-
-		template<class T>
-		class LimitLine
-			:public ILine<T>
-		{
-			ILine<T> &source, &x;
-			T min, max, dflt;
-		public:
-			LimitLine(const T &min, const T &max, ILine<T> &x, ILine<T> &source, const T &dflt = 0):source(source), x(x), min(min), max(max), dflt(dflt){}
-
-			T &operator()(int i){static T dammy; return dammy = x(i) < min || x(i) > max ? dflt : source(i);}
-			const T &operator()(int i) const {static T dammy; return dammy = x(i) < min || x(i) > max ? dflt : source(i);}
-		};
 	}
 }
 
