@@ -3,14 +3,25 @@
 
 #include <cassert>
 #include <iostream>
+#include <type_traits>
 #include "Range.h"
 
 namespace KaTaNA
 {
 	namespace General
 	{
+
+		template<class T>
+		struct IBuffer
+		{
+			virtual ~IBuffer(){}
+			virtual T &operator[](unsigned int i) = 0;
+			virtual const T &operator[](unsigned int i) const = 0;
+		};
+
 		template<class T>
 		class Array
+			:public IBuffer<T>
 		{
 			T *buf;
 
@@ -18,6 +29,12 @@ namespace KaTaNA
 			const unsigned int N;
 
 			Array(unsigned int N):buf(new T[N]), N(N){}//, forall(buf, N){}
+			Array(const Array &a):Array(a.N)
+			{
+				*this = a;
+			}
+
+			Array(Array &&a):buf(a.buf){a.buf = nullptr;}
 			~Array(){delete [] buf;}
 			Array &operator=(const Array &a)
 			{

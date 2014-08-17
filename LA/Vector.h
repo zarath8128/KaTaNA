@@ -2,7 +2,7 @@
 #define ZARATH_KATANA_LA_VECTOR_H
 
 #include <cassert>
-#include <KaTaNA/General/Buffer.h>
+#include <General/Buffer.h>
 
 namespace KaTaNA
 {
@@ -22,10 +22,9 @@ namespace KaTaNA
 			:public virtual IVector<T>
 		{
 			const unsigned int d;
-			T *buf;
+			General::Buffer::Array<T> &buf;
 		public:
-			Vector(unsigned int dim):d(dim), buf(new T[d]){}
-			~Vector(){delete [] buf;}
+			Vector(unsigned int dim, General::Buffer::Array<T> &buf):d(dim), buf(buf){}
 			T &operator[](unsigned int i){assert(i < d);return buf[i];}
 			const T &operator[](unsigned int i) const {assert(i < d);return buf[i];}
 			unsigned int dim() const {return d;}

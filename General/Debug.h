@@ -49,7 +49,7 @@ namespace KaTaNA
 		};
 
 #ifndef NDEBUG
-#define EXPR_VAL(expr) std::cerr << __FILE__ << ":" << __LINE__ << " " << TypeName(expr) << " " << #expr << " = " << (expr) << "\n"
+#define EXPR_VAL(expr) std::cerr << __FILE__ << ":" << __LINE__ << " " << KaTaNA::General::TypeName(expr) << " " << #expr << " = " << (expr) << "\n"
 #else
 #define EXPR_VAL(expr)
 #endif

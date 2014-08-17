@@ -1,58 +1,23 @@
-#include <iostream>
-#include "Buffer.h"
-#include "Output.h"
-#include "Range.h"
-#include <utility>
-#include "Sleep.h"
 #include "Debug.h"
-#include <cstring>
-#include <cstdio>
-#include "MetaProgramming.h"
+#include "Buffer.h"
 
 using namespace KaTaNA::General;
 
-/*class I
-	:public IIterator<double>
+struct A
 {
-	double *p;
-public:
-	I(double *p):p(p){}
-	I(I &&i):p(i.p){}
-	double &operator*(){return *p;}
-	IIterator<double> &operator++(){p++; return *this;}
-
-	bool operator!=(const I &i){return p != i.p;}
+	virtual void say(){std::cout << "Hello A!\n";}
 };
-
-class R
-	:public IRange<double>
+struct B
+	:public A
 {
-	double *b, *e;
-public:
-	R(double *array, int length):b(array), e(array + length){}
-	const IIterator<double> &begin(){return std::move(I(b));}
-	const IIterator<double> &end(){return std::move(I(e));}
+	void say(){std::cout << "Hello B!\n";}
 };
-*/
-
-template<class T>
-class test
-{
-public:
-	auto begin()->decltype(std::declval<T>().Begin()){return ((T*)this)->Begin();}
-};
-
-class test2
-{
-public:
-	int Begin(){return 1;}
-};
-
-int f(){};
 
 int main()
 {
-	test<test2>().begin();
-	auto a = __func__;
+	A aa;
+	B bb;
+	Clone<A> a(std::move(bb));
+	a->say();
 	return 0;
 }

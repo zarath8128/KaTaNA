@@ -3,6 +3,7 @@
 *.swp
 *.optimized
 *.profile
+*.out
 test
 !makefile
 !.gitignore
