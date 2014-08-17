@@ -34,32 +34,25 @@ public:
 	const IIterator<double> &end(){return std::move(I(e));}
 };
 */
-struct A
-{
-	void print(int, char){std::cout << "A\n";}
-};
-struct B
-{
-	int p;
-	int print(char);
-};
 
 template<class T>
-auto h(void *)->decltype(&T::print, '\0');
-template<class T>
-int h(...);
+class test
+{
+public:
+	auto begin()->decltype(std::declval<T>().Begin()){return ((T*)this)->Begin();}
+};
 
-DEF_HAS_(print);
+class test2
+{
+public:
+	int Begin(){return 1;}
+};
+
+int f(){};
 
 int main()
 {
-//	f(A());
-//	f(B());
-	std::cout << (sizeof(decltype(h<A>(0))) == sizeof(decltype(h<B>(0)))) << std::endl;
-	constexpr bool a = has_print<A>();
-	std::cout << a << std::endl;
-//	check<A>(nullptr);
-//	std::cout << CHECK_PRINT<A>().value << std::endl;
-//	std::cout << CHECK_PRINT<B>::value << std::endl;
+	test<test2>().begin();
+	auto a = __func__;
 	return 0;
 }
