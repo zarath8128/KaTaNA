@@ -2,32 +2,48 @@
 #define ZARATH_KATANA_LA_VECTOR_H
 
 #include <cassert>
-#include <General/Buffer.h>
+#include "../General/Buffer.h"
 
 namespace KaTaNA
 {
 	namespace LA
 	{
+
 		template<class T>
-		class IVector
+		class IReadableVector
+		{
+		public:
+			virtual T operator[](unsigned int i) const = 0;
+		};
+
+		template<class T>
+		class IWritableVector
 		{
 		public:
 			virtual T &operator[](unsigned int i) = 0;
-			virtual const T &operator[](unsigned int i) const = 0;
-			virtual unsigned int dim() const = 0;
 		};
+
+		template<class T>
+		class IVector
+			:public IReadableVector<T>, public IWritableVector<T>
+		{};
 
 		template<class T>
 		class Vector
 			:public virtual IVector<T>
 		{
-			const unsigned int d;
-			General::Buffer::Array<T> &buf;
+			General::Array<T> &buf;
+			const unsigned int offset;
 		public:
-			Vector(unsigned int dim, General::Buffer::Array<T> &buf):d(dim), buf(buf){}
-			T &operator[](unsigned int i){assert(i < d);return buf[i];}
-			const T &operator[](unsigned int i) const {assert(i < d);return buf[i];}
-			unsigned int dim() const {return d;}
+			const unsigned int N;
+
+			Vector(unsigned int offset, unsigned int N, General::Array<T> &buf):buf(buf), offset(offset), N(N)
+			{
+				assert(N + offset < buf.N);
+			}
+
+			T &operator[](unsigned int i){assert(i < N);return buf[i + offset];}
+			T operator[](unsigned int i) const {assert(i < N);return buf[i + offset];}
 		};
 	}
 }

@@ -1,0 +1,3 @@
+ALL=test
+
+include ../makefile

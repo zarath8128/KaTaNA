@@ -6,6 +6,7 @@
 #include <type_traits>
 #include "Range.h"
 #include "Utility.h"
+#include "Debug.h"
 
 namespace KaTaNA
 {
@@ -31,11 +32,11 @@ namespace KaTaNA
 			SubBuffer(unsigned int offset, unsigned int N, IBuffer<T> &buf)
 				:buf(buf), offset(offset), N(N)
 			{
-				assert(offset + N < buf.Size());
+				ASSERT(offset + N < buf.Size(), "offset = %u, N = %u, buf.Size() = %u", offset, N, buf.Size());
 			}
 
-			T &operator[](unsigned int i){return assert(i < N), buf[offset + i];}
-			T operator[](unsigned int i) const{return assert(i < N), buf[offset + i];}
+			T &operator[](unsigned int i){return ASSERT((i < N), "i = %u, N = %u", i, N), buf[offset + i];}
+			T operator[](unsigned int i) const{return ASSERT(i < N, "i = %u, N = %u"), buf[offset + i];}
 			unsigned int Size() const{return N;}
 			unsigned int Next() const{return offset + Next;}
 		};
@@ -59,16 +60,34 @@ namespace KaTaNA
 			~Array(){delete [] buf;}
 			Array &operator=(const Array &a)
 			{
-				assert(N == a.N);
+				ASSERT(N == a.N, "N = %u, a.N = %u", N, a.N);
 				for(unsigned int i = 0; i < N; ++i)
 					buf[i] = a[i];
 				return *this;
 			}
 
 			constexpr operator T*() const {return buf;}
-			T &operator[](unsigned int i){return assert(i < N), buf[i];}
-			T operator[](unsigned int i) const{return assert(i < N), buf[i];}
+			T &operator[](unsigned int i){return ASSERT(i < N, "i = %u, N = %u", i , N), buf[i];}
+			T operator[](unsigned int i) const{return ASSERT(i < N, "i = %u, N = %u", i , N), buf[i];}
 			unsigned int Size() const {return N;}
+		};
+
+		template<class T, class B = Array<T>>
+		class ProxyBuffer
+			:public IBuffer<T>
+		{
+			IBuffer<T> &buf;
+		public:
+			const unsigned int N;
+
+			ProxyBuffer(unsigned int N)
+				:buf(*new B(N)), N(N){}
+			ProxyBuffer(unsigned int offset, unsigned int N, IBuffer<T> &buf)
+				:buf(*new SubBuffer<T>(offset, N, buf)), N(N){}
+
+			T &operator[](unsigned int i){return ASSERT(i < N, "i = %u, N = %u"), buf[i];}
+			T operator[](unsigned int i) const{return ASSERT(i < N, "i = %u, N = %u"), buf[i];}
+			unsigned int Size() const{return N;}
 		};
 
 /*		template<class T>
