@@ -1,11 +1,16 @@
 #include "Debug.h"
 #include "Buffer.h"
+#include "Utility.h"
 
 using namespace KaTaNA::General;
 
 struct A
 {
-	virtual void say(){std::cout << "Hello A!\n";}
+	virtual void say(int a = 0){std::cout << "Hello A!\n";
+		DBG_WRITE();
+		assert(0);
+	ASSERT(0);
+	}
 };
 struct B
 	:public A
@@ -13,11 +18,27 @@ struct B
 	void say(){std::cout << "Hello B!\n";}
 };
 
+struct C
+{
+	~C(){DBG_WRITE("destructed");}
+};
+
+const C& f(const C& c)
+{
+	DBG_WRITE();
+	return c;
+}
+
 int main()
 {
-	A aa;
-	B bb;
-	Clone<A> a(std::move(bb));
-	a->say();
+	EXPR_VAL(Min(10, 3, 1, 2));
+	Array<double> buffer(20);
+	SubBuffer<double> buf(10, 5, buffer);
+	for(int i = 0; i < 5; ++i)
+		buf[i] = i + 20;
+	for(int i = 0; i < 20; ++i)
+		std::cout << i << ":" << buffer[i] << std::endl;
+//	assert(0);
+//	A().say();
 	return 0;
 }
