@@ -1,3 +1,4 @@
+#include <iostream>
 #include "Debug.h"
 #include "Buffer.h"
 #include "Utility.h"
@@ -33,12 +34,15 @@ int main()
 {
 	EXPR_VAL(Min(10, 3, 1, 2));
 	Array<double> buffer(20);
-	SubBuffer<double> buf(10, 5, buffer);
-	ProxyBuffer<double> pbuf(0, 10, buffer);
-	for(int i = 0; i < 15; ++i)
-		pbuf[i] = i + 20;
-	for(int i = 0; i < 20; ++i)
-		std::cout << i << ":" << buffer[i] << std::endl;
+//	Buffer<double> buf(10, 5, buffer);
+	Buffer<double> buf(10);
+//	Buffer<double> pbuf(3, 10, buffer);
+//	for(int i = 0; i < 10; ++i)
+//		pbuf[i] = i + 20;
+//	for(int i = 0; i < 5; ++i)
+//		std::cout << i << ":" << buf[i] << std::endl;
+//	constexpr const char *name = typeid(Buffer<double>).name();
+//	std::cout << typeid(buf).name() << std::endl;
 //	assert(0);
 //	A().say();
 	return 0;

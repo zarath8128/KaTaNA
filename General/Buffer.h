@@ -23,25 +23,6 @@ namespace KaTaNA
 		};
 
 		template<class T>
-		class SubBuffer
-			:public IBuffer<T>
-		{
-			IBuffer<T> &buf;
-		public:
-			const unsigned int offset, N;
-			SubBuffer(unsigned int offset, unsigned int N, IBuffer<T> &buf)
-				:buf(buf), offset(offset), N(N)
-			{
-				ASSERT(offset + N < buf.Size(), "offset = %u, N = %u, buf.Size() = %u", offset, N, buf.Size());
-			}
-
-			T &operator[](unsigned int i){return ASSERT((i < N), "i = %u, N = %u", i, N), buf[offset + i];}
-			T operator[](unsigned int i) const{return ASSERT(i < N, "i = %u, N = %u"), buf[offset + i];}
-			unsigned int Size() const{return N;}
-			unsigned int Next() const{return offset + Next;}
-		};
-
-		template<class T>
 		class Array
 			:public IBuffer<T>
 		{
@@ -50,7 +31,7 @@ namespace KaTaNA
 		public:
 			const unsigned int N;
 
-			Array(unsigned int N):buf(new T[N]), N(N){}//, forall(buf, N){}
+			Array(unsigned int N):buf(new T[N]), N(N){}
 			Array(const Array &a):Array(a.N)
 			{
 				*this = a;
@@ -72,24 +53,34 @@ namespace KaTaNA
 			unsigned int Size() const {return N;}
 		};
 
-		template<class T, class B = Array<T>>
-		class ProxyBuffer
+		template<bool B, class... T> class print_type;
+		template<class... T> class print_type<true, T...>{public:const static bool value = true;};
+		template<class... T> class print_type<false, T...>{const static bool value = false;};
+
+		template<class T, class BUFFER = Array<T>>
+		class Buffer
 			:public IBuffer<T>
 		{
+			static_assert(print_type<std::is_base_of<IBuffer<T>, BUFFER>::value, BUFFER>::value, "BUFFER must be derived IBuffer");
 			IBuffer<T> &buf;
+			bool buf_must_be_deleted;
 		public:
-			const unsigned int N;
+			const unsigned int offset, N;
+			Buffer(unsigned int N)
+				:buf(*new BUFFER(N)), buf_must_be_deleted(true), offset(0), N(N){}
+			Buffer(unsigned int offset, unsigned int N, IBuffer<T> &buf)
+				:buf(buf), buf_must_be_deleted(false), offset(offset), N(N)
+			{
+				ASSERT(offset + N < buf.Size(), "offset = %u, N = %u, buf.Size() = %u", offset, N, buf.Size());
+			}
 
-			ProxyBuffer(unsigned int N)
-				:buf(*new B(N)), N(N){}
-			ProxyBuffer(unsigned int offset, unsigned int N, IBuffer<T> &buf)
-				:buf(*new SubBuffer<T>(offset, N, buf)), N(N){}
-
-			T &operator[](unsigned int i){return ASSERT(i < N, "i = %u, N = %u"), buf[i];}
-			T operator[](unsigned int i) const{return ASSERT(i < N, "i = %u, N = %u"), buf[i];}
+			T &operator[](unsigned int i){return ASSERT(i < N, "i = %u, N = %u", i, N), buf[offset + i];}
+			T operator[](unsigned int i) const{return ASSERT(i < N, "i = %u, N = %u", i, N), buf[offset + i];}
 			unsigned int Size() const{return N;}
+			unsigned int Next() const{return offset + Next;}
 		};
 
+	
 /*		template<class T>
 		class VLArray
 			:public IBuffer<T>
