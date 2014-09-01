@@ -39,10 +39,10 @@
 #endif*/
 //*----------------------------------------------------------------*//
 
-#define PRINT_HERE(cstream) (void)fprintf(cstream, "%s:%d: %s: ", __FILE__, __LINE__, __ASSERT_FUNCTION)
+#define PRINT_HERE(cstream) fprintf(cstream, "%s:%d: %s: ", __FILE__, __LINE__, __ASSERT_FUNCTION)
 
 #ifndef NDEBUG
-#  define ASSERT(expr, ...) ((expr) ? (void)0 : PRINT_HERE(stderr), fprintf(stderr, "Assertion `" #expr "' failed. " __VA_ARGS__), fprintf(stderr, "\n"), abort())
+#  define ASSERT(expr, ...) ((expr) ? (void)0 : (PRINT_HERE(stderr), fprintf(stderr, "Assertion `" #expr "' failed. " __VA_ARGS__), fprintf(stderr, "\n"), abort()))
 #else
 #  define ASSERT(expr, ...)
 #endif
