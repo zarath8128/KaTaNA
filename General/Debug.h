@@ -18,7 +18,7 @@
 #endif
 
 //*-----------------------form GNU C Library-----------------------*//
-#ifndef __GNUC_PREREQ
+/*#ifndef __GNUC_PREREQ
 #  if defined __GNUC__ && defined __GNUC_MINOR__
 #    define __GNUC_PREREQ(maj, min) ((__GNUC__ << 16) + __GNUC_MINOR__ >= ((maj) << 16) + (min))
 #  else
@@ -36,13 +36,13 @@
 #      define __ASSERT_FUNCTION    ((__const char *) 0)
 #    endif
 #  endif
-#endif
+#endif*/
 //*----------------------------------------------------------------*//
 
-#define PRINT_HERE(cstream) fprintf(cstream, "%s:%d: %s: ", __FILE__, __LINE__, __ASSERT_FUNCTION)
+#define PRINT_HERE(cstream) (void)fprintf(cstream, "%s:%d: %s: ", __FILE__, __LINE__, __ASSERT_FUNCTION)
 
 #ifndef NDEBUG
-#  define ASSERT(expr, ...) {if(!(expr)) PRINT_HERE(stderr), fprintf(stderr, "Assertion `" #expr "' failed. " __VA_ARGS__), fprintf(stderr, "\n"), abort();}while(0);
+#  define ASSERT(expr, ...) ((expr) ? (void)0 : PRINT_HERE(stderr), fprintf(stderr, "Assertion `" #expr "' failed. " __VA_ARGS__), fprintf(stderr, "\n"), abort())
 #else
 #  define ASSERT(expr, ...)
 #endif
